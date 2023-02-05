@@ -5,6 +5,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 type Task = {
 	id: number;
 	description: string;
+	done: boolean;
 };
 
 export const TaskList = () => {
@@ -26,12 +27,22 @@ export const TaskList = () => {
 							(maxId, currentId) => (maxId < currentId ? currentId : maxId),
 							-Infinity
 						) + 1;
-		setTasks([...tasks, { id, description: newTask.trim() } as Task]);
+		const task: Task = { id, description: newTask.trim(), done: false };
+		setTasks([...tasks, task]);
 		setNewTask("");
 	};
 
 	const handleRemoveTask = ({ id }: Task) => {
 		setTasks(tasks.filter((task) => task.id !== id));
+	};
+
+	const handleToggleTask = ({ id }: Task) => {
+		setTasks(
+			tasks.map(
+				(task: Task): Task =>
+					task.id === id ? { ...task, done: !task.done } : task
+			)
+		);
 	};
 
 	return (
@@ -48,18 +59,23 @@ export const TaskList = () => {
 					<Form.Text className="text-muted">Try to type a new task</Form.Text>
 				</Form.Group>
 			</Form>
-			<Table striped bordered hover className="mt-4">
+			<Table bordered hover className="mt-4">
 				<thead>
 					<tr>
-						<th className="col-8">Task</th>
-						<th className="col-4">Actions</th>
+						<th className="col-8 col-md-10">Task</th>
+						<th className="col-4 col-md-2 text-center">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					{tasks.map((task: Task, index: number) => (
 						<tr key={index}>
-							<td>{task.description}</td>
-							<td>
+							<td
+								className={`${task.done ? "text-decoration-line-through" : ""}`}
+								onClick={() => handleToggleTask(task)}
+							>
+								{task.description}
+							</td>
+							<td className="text-center">
 								<BsFillTrashFill
 									className="mx-1"
 									title="Eliminar"
