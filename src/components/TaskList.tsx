@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from "react";
-import { Container, Form, Row, Table } from "react-bootstrap";
+import { Container, Form, Table } from "react-bootstrap";
 import { BsFillTrashFill } from "react-icons/bs";
 
 type Task = {
