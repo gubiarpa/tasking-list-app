@@ -1,5 +1,6 @@
 import { useState, ChangeEvent } from "react";
-import { Container, Form, Table } from "react-bootstrap";
+import { Container, Form, Row, Table } from "react-bootstrap";
+import { BsFillTrashFill } from "react-icons/bs";
 
 type Task = {
 	id: number;
@@ -29,6 +30,10 @@ function App() {
 		setNewTask("");
 	};
 
+	const handleRemoveTask = ({ id }: Task) => {
+		setTasks(tasks.filter((task) => task.id !== id));
+	};
+
 	return (
 		<Container>
 			<Form onSubmit={handleSubmitForm}>
@@ -46,7 +51,6 @@ function App() {
 			<Table striped bordered hover>
 				<thead>
 					<tr>
-						<th>#</th>
 						<th>Task</th>
 						<th>Actions</th>
 					</tr>
@@ -54,9 +58,13 @@ function App() {
 				<tbody>
 					{tasks.map((task: Task, index: number) => (
 						<tr key={index}>
-							<td>{task.id}</td>
 							<td>{task.description}</td>
-							<td></td>
+							<td>
+								<BsFillTrashFill
+									title="Eliminar"
+									onClick={() => handleRemoveTask(task)}
+								/>
+							</td>
 						</tr>
 					))}
 				</tbody>
