@@ -35,7 +35,7 @@ function App() {
 	};
 
 	return (
-		<Container>
+		<Container className="mt-5 col-lg-7">
 			<Form onSubmit={handleSubmitForm}>
 				<Form.Group className={"mb-3"}>
 					<Form.Label>New Task</Form.Label>
@@ -48,7 +48,7 @@ function App() {
 					<Form.Text className="text-muted">Try to type a new task</Form.Text>
 				</Form.Group>
 			</Form>
-			<Table striped bordered hover>
+			<Table striped bordered hover className="mt-4">
 				<thead>
 					<tr>
 						<th>Task</th>
