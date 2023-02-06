@@ -1,6 +1,6 @@
-import { useState, ChangeEvent } from "react";
-import { Container, Form, Table } from "react-bootstrap";
-import { BsFillTrashFill } from "react-icons/bs";
+import { useRef, useState } from "react";
+import { Button, Container, Form, InputGroup, Table } from "react-bootstrap";
+import { BsFillTrashFill, BsPlusCircle } from "react-icons/bs";
 
 type Task = {
 	id: number;
@@ -12,12 +12,17 @@ export const TaskList = () => {
 	const [newTask, setNewTask] = useState<string>("");
 	const [tasks, setTasks] = useState<Task[]>([]);
 
-	const handleChangeNewTask = (e: ChangeEvent<HTMLInputElement>) => {
+	const newTaskRef = useRef<HTMLInputElement>(null);
+
+	const handleChangeNewTask = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewTask(e.target.value);
 	};
 
-	const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleAddTask = (
+		e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+	) => {
 		e.preventDefault();
+		if (!newTask || newTask.length < 3) return;
 		const id =
 			tasks?.length === 0
 				? 1
@@ -30,6 +35,7 @@ export const TaskList = () => {
 		const task: Task = { id, description: newTask.trim(), done: false };
 		setTasks([...tasks, task]);
 		setNewTask("");
+        newTaskRef.current?.focus();
 	};
 
 	const handleRemoveTask = ({ id }: Task) => {
@@ -47,17 +53,23 @@ export const TaskList = () => {
 
 	return (
 		<Container className="mt-5 col-lg-7">
-			<Form onSubmit={handleSubmitForm}>
-				<Form.Group className={"mb-3"}>
-					<Form.Label>New Task</Form.Label>
+			<Form onSubmit={handleAddTask}>
+				<InputGroup className="mb-3">
 					<Form.Control
+						ref={newTaskRef}
 						type="text"
 						placeholder="Enter new task"
 						value={newTask}
 						onChange={handleChangeNewTask}
 					/>
-					<Form.Text className="text-muted">Try to type a new task</Form.Text>
-				</Form.Group>
+					<Button
+						variant="outline-success"
+						id="button-addon2"
+						onClick={handleAddTask}
+					>
+						<BsPlusCircle />
+					</Button>
+				</InputGroup>
 			</Form>
 			<Table bordered hover className="mt-4">
 				<thead>
@@ -77,6 +89,7 @@ export const TaskList = () => {
 							</td>
 							<td className="text-center">
 								<BsFillTrashFill
+									cursor={"pointer"}
 									className="mx-1"
 									title="Eliminar"
 									onClick={() => handleRemoveTask(task)}
