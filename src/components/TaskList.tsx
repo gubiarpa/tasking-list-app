@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Container, Table } from "react-bootstrap";
-import { getNewId, isValidTaskDescription } from "../helpers/task.helper";
+import { getNewId } from "../helpers/task.helper";
 import TaskItem from "./TaskItem";
 import TaskNew from "./TaskNew";
 
