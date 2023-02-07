@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { Container, Table } from "react-bootstrap";
 import { getNewId } from "../helpers/task.helper";
 import TaskItem from "./TaskItem";
@@ -11,36 +11,54 @@ export type Task = {
 };
 
 export const TaskList = () => {
-	const [tasks, setTasks] = useState<Task[]>([]);
+	const initState: Task[] = [];
 
-	const handleAddTask = (newTaskDescription: string) => {
-		const id = getNewId(tasks);
-		const task: Task = {
-			id,
-			description: newTaskDescription.trim(),
-			done: false,
-		};
-		setTasks([...tasks, task]);
+	const enum REDUCER_ACTION_TYPE {
+		NEW_TASK,
+		TOOGLE_TASK,
+		REMOVE_TASK,
+	}
+
+	type ReducerAction = {
+		type: REDUCER_ACTION_TYPE;
+		payload?: Task;
 	};
 
-	const handleRemoveTask = ({ id }: Task) => {
-		setTasks(tasks.filter((task) => task.id !== id));
+	const reducer = (state: Task[], action: ReducerAction): Task[] => {
+		switch (action.type) {
+			case REDUCER_ACTION_TYPE.NEW_TASK:
+				return [
+					...state,
+					{
+						id: getNewId(state),
+						description: action.payload?.description!,
+						done: false,
+					},
+				];
+			case REDUCER_ACTION_TYPE.TOOGLE_TASK:
+				return state.map(
+					(task: Task): Task =>
+						task.id === action.payload?.id
+							? { ...task, done: !task.done }
+							: task
+				);
+			case REDUCER_ACTION_TYPE.REMOVE_TASK:
+				return state.filter((task) => task.id !== action.payload?.id);
+			default:
+				throw new Error();
+		}
 	};
 
-	const handleToggleTask = ({ id }: Task) => {
-		setTasks(
-			tasks.map(
-				(task: Task): Task =>
-					task.id === id ? { ...task, done: !task.done } : task
-			)
-		);
-	};
+	const [state, dispatch] = useReducer(reducer, initState);
 
 	return (
 		<Container className="mt-5 col-lg-7">
 			<TaskNew
 				handleAdd={(newTaskDescription: string) =>
-					handleAddTask(newTaskDescription)
+					dispatch({
+						type: REDUCER_ACTION_TYPE.NEW_TASK,
+						payload: { id: 0, description: newTaskDescription, done: false },
+					})
 				}
 			/>
 			<Table bordered hover className="mt-4">
@@ -51,12 +69,22 @@ export const TaskList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{tasks.map((task: Task, index: number) => (
+					{state.map((task: Task, index: number) => (
 						<TaskItem
 							key={index}
 							task={task}
-							handleToggle={() => handleToggleTask(task)}
-							handleRemove={() => handleRemoveTask(task)}
+							handleToggle={() =>
+								dispatch({
+									type: REDUCER_ACTION_TYPE.TOOGLE_TASK,
+									payload: task,
+								})
+							}
+							handleRemove={() =>
+								dispatch({
+									type: REDUCER_ACTION_TYPE.REMOVE_TASK,
+									payload: task,
+								})
+							}
 						/>
 					))}
 				</tbody>

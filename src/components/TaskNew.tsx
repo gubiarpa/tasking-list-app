@@ -36,7 +36,7 @@ const TaskNew = ({ handleAdd }: TaskNewProps) => {
 					onChange={handleChangeNewTask}
 				/>
 				<Button
-					variant="outline-success"
+					variant="outline-primary"
 					disabled={!isValidTaskDescription(newTask)}
 					id="button-addon2"
 					onClick={handleAddTask}
