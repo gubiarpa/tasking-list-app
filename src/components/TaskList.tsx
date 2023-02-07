@@ -1,41 +1,26 @@
-import { useRef, useState } from "react";
-import { Button, Container, Form, InputGroup, Table } from "react-bootstrap";
-import { BsFillTrashFill, BsPlusCircle } from "react-icons/bs";
+import { useState } from "react";
+import { Container, Table } from "react-bootstrap";
+import { getNewId, isValidTaskDescription } from "../helpers/task.helper";
+import TaskItem from "./TaskItem";
+import TaskNew from "./TaskNew";
 
-type Task = {
+export type Task = {
 	id: number;
 	description: string;
 	done: boolean;
 };
 
 export const TaskList = () => {
-	const [newTask, setNewTask] = useState<string>("");
 	const [tasks, setTasks] = useState<Task[]>([]);
 
-	const newTaskRef = useRef<HTMLInputElement>(null);
-
-	const handleChangeNewTask = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNewTask(e.target.value);
-	};
-
-	const handleAddTask = (
-		e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
-	) => {
-		e.preventDefault();
-		if (!newTask || newTask.length < 3) return;
-		const id =
-			tasks?.length === 0
-				? 1
-				: tasks
-						.map((task) => task.id)
-						.reduce(
-							(maxId, currentId) => (maxId < currentId ? currentId : maxId),
-							-Infinity
-						) + 1;
-		const task: Task = { id, description: newTask.trim(), done: false };
+	const handleAddTask = (newTaskDescription: string) => {
+		const id = getNewId(tasks);
+		const task: Task = {
+			id,
+			description: newTaskDescription.trim(),
+			done: false,
+		};
 		setTasks([...tasks, task]);
-		setNewTask("");
-        newTaskRef.current?.focus();
 	};
 
 	const handleRemoveTask = ({ id }: Task) => {
@@ -53,24 +38,11 @@ export const TaskList = () => {
 
 	return (
 		<Container className="mt-5 col-lg-7">
-			<Form onSubmit={handleAddTask}>
-				<InputGroup className="mb-3">
-					<Form.Control
-						ref={newTaskRef}
-						type="text"
-						placeholder="Enter new task"
-						value={newTask}
-						onChange={handleChangeNewTask}
-					/>
-					<Button
-						variant="outline-success"
-						id="button-addon2"
-						onClick={handleAddTask}
-					>
-						<BsPlusCircle />
-					</Button>
-				</InputGroup>
-			</Form>
+			<TaskNew
+				handleAdd={(newTaskDescription: string) =>
+					handleAddTask(newTaskDescription)
+				}
+			/>
 			<Table bordered hover className="mt-4">
 				<thead>
 					<tr>
@@ -80,22 +52,12 @@ export const TaskList = () => {
 				</thead>
 				<tbody>
 					{tasks.map((task: Task, index: number) => (
-						<tr key={index}>
-							<td
-								className={`${task.done ? "text-decoration-line-through" : ""}`}
-								onClick={() => handleToggleTask(task)}
-							>
-								{task.description}
-							</td>
-							<td className="text-center">
-								<BsFillTrashFill
-									cursor={"pointer"}
-									className="mx-1"
-									title="Eliminar"
-									onClick={() => handleRemoveTask(task)}
-								/>
-							</td>
-						</tr>
+						<TaskItem
+							key={index}
+							task={task}
+							handleToggle={() => handleToggleTask(task)}
+							handleRemove={() => handleRemoveTask(task)}
+						/>
 					))}
 				</tbody>
 			</Table>
