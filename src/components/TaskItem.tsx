@@ -1,4 +1,4 @@
-import { BsFillTrashFill } from "react-icons/bs";
+import { BsCheckCircle, BsDashCircle } from "react-icons/bs";
 import { Task } from "./TaskList";
 
 type TaskItemProps = {
@@ -11,18 +11,23 @@ const TaskItem = ({ task, handleToggle, handleRemove }: TaskItemProps) => {
 	return (
 		<tr>
 			<td
-				className={`${task.done ? "text-decoration-line-through" : ""}`}
+				className={`${
+					task.done ? "text-decoration-line-through text-muted" : ""
+				}`}
 				onClick={() => handleToggle()}
 			>
 				{task.description}
 			</td>
 			<td className="text-center">
-				<BsFillTrashFill
-					cursor={"pointer"}
-					className="mx-1"
-					title="Eliminar"
-					onClick={() => handleRemove()}
-				/>
+				{task.done ? (
+					<BsCheckCircle title={`${task.description} is done`} />
+				) : (
+					<BsDashCircle
+						cursor={"pointer"}
+						title={`Remove ${task.description}`}
+						onClick={() => handleRemove()}
+					/>
+				)}
 			</td>
 		</tr>
 	);
