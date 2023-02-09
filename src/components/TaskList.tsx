@@ -4,50 +4,58 @@ import { getNewId } from "../helpers/task.helper";
 import TaskItem from "./TaskItem";
 import TaskNew from "./TaskNew";
 
+type idType = number;
+type descriptionType = string;
+
 export type Task = {
-	id: number;
-	description: string;
+	id: idType;
+	description: descriptionType;
 	done: boolean;
 };
 
-export const TaskList = () => {
-	const initState: Task[] = [];
+type TaskState = {
+	tasks: Task[];
+};
 
-	const enum REDUCER_ACTION_TYPE {
-		NEW_TASK,
-		TOOGLE_TASK,
-		REMOVE_TASK,
-	}
+type TasksAction =
+	| { type: "addTask"; payload: descriptionType }
+	| { type: "toggleTask"; payload: idType }
+	| { type: "removeTask"; payload: idType };
 
-	type ReducerAction = {
-		type: REDUCER_ACTION_TYPE;
-		payload?: Task;
-	};
-
-	const reducer = (state: Task[], action: ReducerAction): Task[] => {
-		switch (action.type) {
-			case REDUCER_ACTION_TYPE.NEW_TASK:
-				return [
-					...state,
+const reducer = (state: TaskState, action: TasksAction): TaskState => {
+	switch (action.type) {
+		case "addTask":
+			return {
+				...state,
+				tasks: [
+					...state.tasks,
 					{
-						id: getNewId(state),
-						description: action.payload?.description!,
+						id: getNewId(state.tasks),
+						description: action.payload,
 						done: false,
 					},
-				];
-			case REDUCER_ACTION_TYPE.TOOGLE_TASK:
-				return state.map(
+				],
+			};
+		case "toggleTask":
+			return {
+				...state,
+				tasks: state.tasks.map(
 					(task: Task): Task =>
-						task.id === action.payload?.id
-							? { ...task, done: !task.done }
-							: task
-				);
-			case REDUCER_ACTION_TYPE.REMOVE_TASK:
-				return state.filter((task) => task.id !== action.payload?.id);
-			default:
-				throw new Error();
-		}
-	};
+						task.id === action.payload ? { ...task, done: !task.done } : task
+				),
+			};
+		case "removeTask":
+			return {
+				...state,
+				tasks: state.tasks.filter((task) => task.id !== action.payload),
+			};
+		default:
+			return state;
+	}
+};
+
+export const TaskList = () => {
+	const initState: TaskState = { tasks: [] };
 
 	const [state, dispatch] = useReducer(reducer, initState);
 
@@ -56,8 +64,8 @@ export const TaskList = () => {
 			<TaskNew
 				handleAdd={(newTaskDescription: string) =>
 					dispatch({
-						type: REDUCER_ACTION_TYPE.NEW_TASK,
-						payload: { id: 0, description: newTaskDescription, done: false },
+						type: "addTask",
+						payload: newTaskDescription,
 					})
 				}
 			/>
@@ -69,20 +77,20 @@ export const TaskList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{state.map((task: Task, index: number) => (
+					{state.tasks.map((task: Task, index: number) => (
 						<TaskItem
 							key={index}
 							task={task}
 							handleToggle={() =>
 								dispatch({
-									type: REDUCER_ACTION_TYPE.TOOGLE_TASK,
-									payload: task,
+									type: "toggleTask",
+									payload: task.id,
 								})
 							}
 							handleRemove={() =>
 								dispatch({
-									type: REDUCER_ACTION_TYPE.REMOVE_TASK,
-									payload: task,
+									type: "removeTask",
+									payload: task.id,
 								})
 							}
 						/>
