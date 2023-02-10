@@ -1,7 +1,8 @@
-import { Task } from "../components/TaskList";
+import { descriptionType, Task } from "../models/Tasks.model";
 
-export const isValidTaskDescription = (taskDescription: string): boolean =>
-	!(!taskDescription || taskDescription.length < 3);
+export const isValidTaskDescription = (
+	taskDescription: descriptionType
+): boolean => !(!taskDescription || taskDescription.length < 3);
 
 export const getNewId = (tasks: Task[]): number =>
 	tasks?.length === 0

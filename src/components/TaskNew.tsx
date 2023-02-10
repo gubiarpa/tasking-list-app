@@ -2,13 +2,14 @@ import { useRef, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { BsPlusCircle } from "react-icons/bs";
 import { isValidTaskDescription } from "../helpers/task.helper";
+import { descriptionType } from "../models/Tasks.model";
 
 type TaskNewProps = {
-	handleAdd: (newTaskDescription: string) => void;
+	handleAdd: (description: descriptionType) => void;
 };
 
 const TaskNew = ({ handleAdd }: TaskNewProps) => {
-	const [newTask, setNewTask] = useState<string>("");
+	const [newTask, setNewTask] = useState<descriptionType>("");
 	const newTaskRef = useRef<HTMLInputElement>(null);
 
 	const handleChangeNewTask = (e: React.ChangeEvent<HTMLInputElement>) => {
