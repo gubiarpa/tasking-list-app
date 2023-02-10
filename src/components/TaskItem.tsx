@@ -1,10 +1,10 @@
 import { BsCheckCircle, BsDashCircle } from "react-icons/bs";
-import { Task } from "./TaskList";
+import { idType, Task } from "../models/Tasks.model";
 
 type TaskItemProps = {
 	task: Task;
-	handleToggle: () => void;
-	handleRemove: () => void;
+	handleToggle: (id: idType) => void;
+	handleRemove: (id: idType) => void;
 };
 
 const TaskItem = ({ task, handleToggle, handleRemove }: TaskItemProps) => {
@@ -14,7 +14,7 @@ const TaskItem = ({ task, handleToggle, handleRemove }: TaskItemProps) => {
 				className={`${
 					task.done ? "text-decoration-line-through text-muted" : ""
 				}`}
-				onClick={() => handleToggle()}
+				onClick={() => handleToggle(task.id)}
 			>
 				{task.description}
 			</td>
@@ -25,7 +25,7 @@ const TaskItem = ({ task, handleToggle, handleRemove }: TaskItemProps) => {
 					<BsDashCircle
 						cursor={"pointer"}
 						title={`Remove ${task.description}`}
-						onClick={() => handleRemove()}
+						onClick={() => handleRemove(task.id)}
 					/>
 				)}
 			</td>
