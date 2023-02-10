@@ -9,7 +9,7 @@ type TaskNewProps = {
 };
 
 const TaskNew = ({ handleAdd }: TaskNewProps) => {
-	const [newTask, setNewTask] = useState<string>("");
+	const [newTask, setNewTask] = useState<descriptionType>("");
 	const newTaskRef = useRef<HTMLInputElement>(null);
 
 	const handleChangeNewTask = (e: React.ChangeEvent<HTMLInputElement>) => {

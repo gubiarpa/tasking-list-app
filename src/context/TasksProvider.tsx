@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { TasksState } from "../models/Tasks.model";
+import { descriptionType, TasksState } from "../models/Tasks.model";
 import { TasksContext } from "./TasksContext";
 import { tasksReducer } from "./tasksReducer";
 
@@ -14,7 +14,7 @@ interface TasksProviderProps {
 export const TasksProvider = ({ children }: TasksProviderProps) => {
 	const [tasksState, dispatch] = useReducer(tasksReducer, INITIAL_STATE);
 
-	const addTask = (description: string) =>
+	const addTask = (description: descriptionType) =>
 		dispatch({
 			type: "addTask",
 			payload: description,
